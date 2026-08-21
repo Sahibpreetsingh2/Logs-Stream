@@ -43,6 +43,12 @@
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
+
+
+
+
+
+
 		<!-- Added for WebSocket / Live Tail -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -67,11 +73,19 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
 
+
+      
+
+
+
+
+
+	</dependencies>
 	<build>
 		<plugins>
             <plugin>
