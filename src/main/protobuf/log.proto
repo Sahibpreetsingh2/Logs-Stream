@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.logstream.backend.grpc";
+
+service LogService {
+
+    rpc SendLog(LogMessage) returns (LogResponse);
+}
+
+message LogMessage {
+
+    string id = 1;
+    string timestamp = 2;
+    string serviceName = 3;
+    string level = 4;
+    string message = 5;
+    int64 responseTime = 6;
+}
+
+message LogResponse {
+
+    string message = 1;
+    bool success = 2;
+}
