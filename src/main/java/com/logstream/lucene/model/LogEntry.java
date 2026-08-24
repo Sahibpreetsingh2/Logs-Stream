@@ -1,28 +1,45 @@
 package com.logstream.lucene.model;
 
-public class LogEntry {
+import java.time.Instant;
+import java.util.Objects;
 
-    private String timestamp;
-    private String level;
-    private String service;
-    private String message;
+/**
+ * Immutable representation of a single parsed log entry.
+ */
+public final class LogEntry {
 
-    public LogEntry() {
+    public enum Level {
+        TRACE, DEBUG, INFO, WARN, ERROR, FATAL, UNKNOWN
     }
 
-    public LogEntry(String timestamp, String level,
-                    String service, String message) {
-        this.timestamp = timestamp;
-        this.level = level;
-        this.service = service;
-        this.message = message;
+    private final Instant timestamp;
+    private final Level level;
+    private final String service;
+    private final String message;
+
+    public LogEntry(Instant timestamp, Level level, String service, String message) {
+        this.timestamp = Objects.requireNonNull(timestamp, "timestamp must not be null");
+        this.level = level == null ? Level.UNKNOWN : level;
+        this.service = Objects.requireNonNull(service, "service must not be null");
+        this.message = message == null ? "" : message;
     }
 
-    public String getTimestamp() {
+    /** Convenience constructor that parses a raw level string (e.g. from log text). */
+    public static LogEntry of(Instant timestamp, String levelStr, String service, String message) {
+        Level level;
+        try {
+            level = levelStr == null ? Level.UNKNOWN : Level.valueOf(levelStr.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            level = Level.UNKNOWN;
+        }
+        return new LogEntry(timestamp, level, service, message);
+    }
+
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public String getLevel() {
+    public Level getLevel() {
         return level;
     }
 
@@ -34,19 +51,29 @@ public class LogEntry {
         return message;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LogEntry)) return false;
+        LogEntry other = (LogEntry) o;
+        return timestamp.equals(other.timestamp)
+                && level == other.level
+                && service.equals(other.service)
+                && message.equals(other.message);
     }
 
-    public void setLevel(String level) {
-        this.level = level;
+    @Override
+    public int hashCode() {
+        return Objects.hash(timestamp, level, service, message);
     }
 
-    public void setService(String service) {
-        this.service = service;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    @Override
+    public String toString() {
+        return "LogEntry{" +
+                "timestamp=" + timestamp +
+                ", level=" + level +
+                ", service='" + service + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

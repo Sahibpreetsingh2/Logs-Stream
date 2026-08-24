@@ -2,75 +2,89 @@ package com.logstream.lucene.index;
 
 import com.logstream.lucene.model.LogEntry;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.document.StoredField;
+import jakarta.annotation.PreDestroy;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class LogIndexer {
 
-    private final Directory directory;
+    private static final Logger log = LoggerFactory.getLogger(LogIndexer.class);
 
-    public LogIndexer(Directory directory) {
-        this.directory = directory;
+    private final IndexWriter writer;
+
+    public LogIndexer(Directory directory) throws IOException {
+        StandardAnalyzer analyzer = new StandardAnalyzer();
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        // Long-lived writer; IndexWriter is thread-safe for concurrent addDocument calls.
+        this.writer = new IndexWriter(directory, config);
     }
 
-    public void indexLog(LogEntry log) throws IOException {
+    /** Indexes a single log entry. For bulk ingestion, prefer {@link #indexLogs(List)}. */
+    public void indexLog(LogEntry entry) throws IOException {
+        writer.addDocument(toDocument(entry));
+        writer.commit();
+    }
 
-        StandardAnalyzer analyzer = new StandardAnalyzer();
+    /** Indexes a batch of log entries with a single commit — much cheaper than per-entry commits. */
+    public void indexLogs(List<LogEntry> entries) throws IOException {
+        if (entries == null || entries.isEmpty()) {
+            return;
+        }
+        for (LogEntry entry : entries) {
+            writer.addDocument(toDocument(entry));
+        }
+        writer.commit();
+    }
 
-        IndexWriterConfig config =
-                new IndexWriterConfig(analyzer);
+    private Document toDocument(LogEntry entry) {
+        Document document = new Document();
 
-        try (IndexWriter writer =
-                     new IndexWriter(directory, config)) {
+        document.add(new StringField(
+                "level",
+                entry.getLevel().name(),
+                Field.Store.YES
+        ));
 
-            Document document = new Document();
+        document.add(new StringField(
+                "service",
+                entry.getService(),
+                Field.Store.YES
+        ));
 
-            document.add(
-                    new StringField(
-                            "level",
-                            log.getLevel(),
-                            Field.Store.YES
-                    )
-            );
+        document.add(new TextField(
+                "message",
+                entry.getMessage(),
+                Field.Store.YES
+        ));
 
-            document.add(
-                    new StringField(
-                            "service",
-                            log.getService(),
-                            Field.Store.YES
-                    )
-            );
+        long epochMillis = entry.getTimestamp().toEpochMilli();
 
-            document.add(
-                    new TextField(
-                            "message",
-                            log.getMessage(),
-                            Field.Store.YES
-                    )
-            );
+        // Indexed + range-queryable (e.g. LongPoint.newRangeQuery("timestamp_ms", from, to))
+        document.add(new LongPoint("timestamp_ms", epochMillis));
+        // Enables sorting search results by timestamp
+        document.add(new NumericDocValuesField("timestamp_ms", epochMillis));
+        // Stored so the original value can be retrieved and reconstructed via Instant.ofEpochMilli(...)
+        document.add(new StoredField("timestamp_ms", epochMillis));
 
-            document.add(
-                    new StoredField(
-                            "timestamp",
-                            log.getTimestamp()
-                    )
-            );
+        return document;
+    }
 
-            writer.addDocument(document);
-
-            writer.commit();
+    @PreDestroy
+    public void close() {
+        try {
+            writer.close();
+        } catch (IOException e) {
+            log.error("Failed to close IndexWriter cleanly", e);
         }
     }
 }
