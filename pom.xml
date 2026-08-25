@@ -60,6 +60,34 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+		
+		<!-- Apache Lucene -->
+         <dependency>
+              <groupId>org.apache.lucene</groupId>
+              <artifactId>lucene-core</artifactId>
+              <version>10.3.1</version>
+              </dependency>
+              
+              <!-- Apache Lucene Core -->
+               <dependency>
+                     <groupId>org.apache.lucene</groupId>
+                     <artifactId>lucene-core</artifactId>
+                     <version>10.3.1</version>
+                     </dependency>
+
+                 <!-- Lucene Standard Analyzer -->
+                 <dependency>
+                       <groupId>org.apache.lucene</groupId>
+                       <artifactId>lucene-analysis-common</artifactId>
+                       <version>10.3.1</version>
+                       </dependency>
+
+                 <!-- Lucene Query Parser -->
+				 <dependency>
+					    <groupId>org.apache.lucene</groupId>
+					    <artifactId>lucene-queryparser</artifactId>
+					    <version>10.3.1</version>
+					     </dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
