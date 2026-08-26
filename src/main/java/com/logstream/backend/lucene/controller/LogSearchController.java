@@ -1,6 +1,6 @@
-package com.logstream.lucene.controller;
+package com.logstream.backend.lucene.controller;
 
-import com.logstream.lucene.search.LogSearcher;
+import com.logstream.backend.lucene.search.LogSearcher;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

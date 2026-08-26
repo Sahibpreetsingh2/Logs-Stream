@@ -1,6 +1,6 @@
-package com.logstream.lucene.index;
+package com.logstream.backend.lucene.index;
 
-import com.logstream.lucene.model.LogEntry;
+import com.logstream.backend.lucene.model.LogEntry;
 
 import jakarta.annotation.PreDestroy;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;

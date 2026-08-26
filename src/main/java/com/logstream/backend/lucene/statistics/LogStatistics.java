@@ -1,4 +1,4 @@
-package com.logstream.lucene.statistics;
+package com.logstream.backend.lucene.statistics;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;

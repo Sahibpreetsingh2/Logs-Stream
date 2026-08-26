@@ -1,4 +1,4 @@
-package com.logstream.lucene.search;
+package com.logstream.backend.lucene.search;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;

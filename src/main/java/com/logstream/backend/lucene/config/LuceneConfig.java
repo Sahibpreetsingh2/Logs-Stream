@@ -1,4 +1,4 @@
-package com.logstream.lucene.config;
+package com.logstream.backend.lucene.config;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;

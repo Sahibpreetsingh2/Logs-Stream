@@ -1,4 +1,4 @@
-package com.logstream.lucene.search;
+package com.logstream.backend.lucene.search;
 
 import java.time.Instant;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package com.logstream.lucene.model;
+package com.logstream.backend.lucene.model;
 
 import java.time.Instant;
 import java.util.Objects;

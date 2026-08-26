@@ -1,6 +1,6 @@
-package com.logstream.lucene.parser;
+package com.logstream.backend.lucene.parser;
 
-import com.logstream.lucene.model.LogEntry;
+import com.logstream.backend.lucene.model.LogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
