@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
@@ -67,8 +68,12 @@ public class LogParser {
             // Change this to `return Optional.empty();` if you want strict validation instead.
         }
 
-        return Optional.of(new LogEntry(
-                timestamp.toString(),
+        // LogEntry.of(...) is the static factory that accepts raw String/level input
+        // and builds the proper LogEntry (Instant timestamp, Level enum, service, message).
+        // Using UTC here since LocalDateTime has no zone info of its own — adjust if logs
+        // are known to be in a different zone.
+        return Optional.of(LogEntry.of(
+                timestamp.toInstant(ZoneOffset.UTC),
                 level,
                 service,
                 message
