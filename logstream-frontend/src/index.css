@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-surface-0 text-ink-primary antialiased;
+}
+
+/* Thin scrollbars that fit the dark console aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a333f;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #364152;
+}
+
+/* Visible keyboard focus everywhere, without relying on outline-none defaults */
+:focus-visible {
+  outline: 2px solid #3ea6ff;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.table-scroll {
+  @apply w-full overflow-x-auto;
+}
+
+.mono-num {
+  @apply font-mono tabular-nums;
+}
